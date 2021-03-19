@@ -1,4 +1,4 @@
-<?php 
+<?php
 header('Access-Control-Allow-Origin:*');
 header('Content-type: application/json');
 ini_set('display_errors','off');
@@ -28,6 +28,8 @@ if (strpos($url,'pipix') !== false){
     $arr = $api->zuiyou($url);
 } elseif (strpos($url, 'bbq.bilibili') !== false){
     $arr = $api->bbq($url);
+} elseif (strpos($url, 'b23.tv') !== false){
+    $arr = $api->btv($url);
 } elseif (strpos($url, 'kuaishou') !== false){
     $arr = $api->kuaishou($url);
 } elseif (strpos($url, 'quanmin') !== false){

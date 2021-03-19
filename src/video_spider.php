@@ -8,7 +8,7 @@
 
 namespace Video_spider;
 class Video
-{    
+{
     public function pipixia($url){
         $loc = get_headers($url, true)['location'];
         preg_match('/item\/(.*)\?/',$loc,$id);
@@ -77,7 +77,7 @@ class Video
         if (strpos($url,'h5.weishi') != false){
             $arr = json_decode($this->curl('https://h5.weishi.qq.com/webapp/json/weishi/WSH5GetPlayPage?feedid='.$id[1]),true);
         } else {
-            $arr = json_decode($this->curl('https://h5.weishi.qq.com/webapp/json/weishi/WSH5GetPlayPage?feedid='.$url),true);   
+            $arr = json_decode($this->curl('https://h5.weishi.qq.com/webapp/json/weishi/WSH5GetPlayPage?feedid='.$url),true);
         }
         $arr = array(
             'code' => 200,
@@ -124,7 +124,7 @@ class Video
         preg_match('/<video src=\"([^\"]*)\"/',$text,$video_url);
         preg_match('/<div class=\"nickname\">(.*)<\/div>/',$text,$video_author);
         preg_match('/<a class=\"avatar\"><img src=\"(.*)\?/',$text,$video_author_img);
-        preg_match('/<div class=\"like-count\">(.*)次点赞<\/div>/',$text,$video_like);                  
+        preg_match('/<div class=\"like-count\">(.*)次点赞<\/div>/',$text,$video_like);
         $arr = array(
             'code' => 200,
             'msg' => '解析成功',
@@ -157,7 +157,29 @@ class Video
                 'url' => $video_url,
             )
         );
-       return $arr;    
+       return $arr;
+    }
+
+    public function btv($url){
+        $content = $this->curl($url);
+        print_r($content);
+        $source_url = $this -> get_href_url($content);
+        preg_match('/id=(.*)\b/',$source_url,$id);
+        $arr = json_decode($this->curl('https://bbq.bilibili.com/bbq/app-bbq/sv/detail?svid='.$id[1]),true);
+        $arr = array(
+            'code' => 200,
+            'msg' => '解析成功',
+            'data' => array(
+                'author' => $arr['data']['user_info']['uname'],
+                'avatar' => $arr['data']['user_info']['face'],
+                'time' => $arr['data']['pubtime'],
+                'like' => $arr['data']['like'],
+                'title' => $arr['data']['title'],
+                'cover' => $arr['data']['cover_url'],
+                'url' => $arr['data']['play']['file_info'][0]['url'],
+            )
+        );
+        return $arr;
     }
 
     public function bbq($url){
@@ -176,7 +198,7 @@ class Video
                 'url' => $arr['data']['play']['file_info'][0]['url'],
             )
         );
-       return $arr;  
+       return $arr;
     }
 
     public function kuaishou($url){
@@ -232,7 +254,7 @@ class Video
         );
         return $arr;
     }
-    
+
     public function before($url){
         preg_match('/detail\/(.*)\?/',$url,$id);
         $arr = json_decode($this->curl('https://hlg.xiatou.com/h5/feed/detail?id='.$id[1]),true);
@@ -309,7 +331,7 @@ class Video
                 'like' => $video_like[1],
                 'title' => $video_title[1],
                 "cover" => $video_cover[1],
-                "url" => $video_url[1], 
+                "url" => $video_url[1],
             )
         );
         return $arr;
@@ -334,7 +356,7 @@ class Video
         );
         return $arr;
     }
-    
+
     public function pipigaoxiao($url){
         preg_match('/post\/(.*)/', $url, $id);
         $arr = json_decode($this->pipigaoxiao_curl($id[1]), true);
@@ -423,4 +445,9 @@ class Video
         return $output;
     }
 
+    private function get_href_url($content){
+        preg_match('/href="(.*?)">Found/', $content, $matches);
+        $res = $matches[1];
+        return $res;
+    }
 }
