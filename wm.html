@@ -6,11 +6,12 @@
     <meta name="renderer" content="webkit"/>
     <meta name="force-rendering" content="webkit"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <title>Demo</title>
+    <title>在线短视频去水印解析</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@1.0.0/dist/css/mdui.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/mdui@1.0.0/dist/js/mdui.min.js"></script>
     <script src="https://cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
 </head>
 <body class="mdui-theme-primary-indigo mdui-theme-accent-pink">
 <style>
@@ -36,6 +37,12 @@
         text-transform: none;
     }
 
+    .mdui-textfield-input-hidden {
+        display: block;
+        float: left;
+        width: 100%;
+    }
+
     .mdui-btn {
         width: 25%;
     }
@@ -52,7 +59,7 @@
 
     .mdui-card {
         opacity: .8;
-        padding: 2em;;
+        padding: 2em;
         border-radius: 6px;
     }
 
@@ -73,23 +80,26 @@
 <main class="mdui-container">
     <div class="mdui-card">
         <img class="mdui-img-circle mdui-center" style="width: 150px;"
-             src="https://cdn.jsdelivr.net/gh/5ime/img/avatar.jpg"/>
+             src="https://avatars.githubusercontent.com/u/8397706?s=460&u=f2ab7978e0e61d9d2fa6d4f3bc52dfc29ef3c2c7&v=4"/>
+        <!--        src="https://cdn.jsdelivr.net/gh/5ime/img/avatar.jpg"/>-->
         <h1 class='mdui-text-center'>在线短视频去水印解析</h1>
-        <div class="mdui-typo">
-            <p><strong>目前支持 </strong>抖音/皮皮虾/火山/微视/微博/绿洲/最右/轻视频/快手/全民小视频/皮皮搞笑/巴塞电影/陌陌/Before避风/开眼/Vue Vlog/小咖秀/全民K歌</p>
-            <p><strong>温馨提示 </strong>粘贴视频地址时<u>无需删除文案</u><small> 但如果视频链接正确但解析失败请删掉文案后重试</small></p>
-            <hr/>
-        </div>
         <div class="mdui-card-content mdui-typo">
             <div class="mdui-textfield mdui-textfield-floating-label">
                 <input class="mdui-textfield-input" type="text" id="url" placeholder="请粘贴视频分享地址" required/>
                 <div class="mdui-textfield-error">
                     需要解析的视频地址不能为空
                 </div>
-                <button class="mdui-btn mdui-color-theme-accent mdui-ripple" onclick="setValue()">解析</button>
+                <button class="mdui-btn mdui-color-theme-accent mdui-ripple"
+                        onclick="setValue()">解析
+                </button>
             </div>
         </div>
         <div class="down mdui-text-center"></div>
+        <div class="mdui-typo">
+            <p><strong>目前支持 </strong>抖音/皮皮虾/火山/微视/微博/绿洲/最右/轻视频/快手/全民小视频/皮皮搞笑/巴塞电影/陌陌/Before避风/开眼/Vue Vlog/小咖秀/全民K歌</p>
+            <p><strong>温馨提示 </strong>粘贴视频地址时<u>无需删除文案</u><small> 但如果视频链接正确但解析失败请删掉文案后重试</small></p>
+            <hr/>
+        </div>
     </div>
 </main>
 <script>
@@ -119,15 +129,51 @@
                 + jsonObj.data.cover + '" target="_blank" download="video">下载封面</a>'
                 + '<a class="mdui-btn mdui-btn-raised" href="' + jsonObj.data.url
                 + '" target="_blank" download="video">查看视频</a>'
+
+                + '<input class="mdui-btn mdui-btn-raised" '
+                + 'onclick="handleCopy(\'' + encodeURIComponent(jsonObj.data.url) + '\')" type="button" value="复制链接" />'
+
                 + '<input class="mdui-btn mdui-btn-raised" id="downClick" '
                 + 'onclick="savePicture(\'' + encodeURIComponent(jsonObj.data.url) + '\',\''
-                + jsonObj.data.title + '\')" type="button" value="保存视频到手机" />');
+                + jsonObj.data.title + '\')" type="button" value="保存视频到" />'
+
+                + '<input class="mdui-textfield-input mdui-textfield-input-hidden" type="text" id="copyInput" value="' + jsonObj.data.url + '" />'
+            );
         } else {
             mdui.snackbar({
                 message: '解析失败,视频不存在或者链接不正确'
             });
         }
     }
+
+    handleCopy = () => {
+        let range, selection;
+        let input = document.getElementById("copyInput");
+        input.select();  // 获取到需要复制的内容
+        if (input.value && ((typeof input.select) == 'function')) {
+            console.log("input.value = ", input.value);
+            range = document.createRange();  // 创建range对象
+            selection = document.getSelection();  // 返回一个Selection 对象，表示用户选择的文本范围或光标的当前位置。
+            range.selectNode(input);
+            selection.addRange(range);
+            input.setSelectionRange(0, input.value.length);  // 为当前元素内的文本设置备选中范围
+            let successful = document.execCommand('copy');  //  使用document.execCommand()方法， copy指令复制选中的文字到粘贴板的功能
+            if (!successful) {
+                window.clipboardData.setData('text', input.value);  // 解决部分浏览器复制之后没有粘贴到粘贴板，使用浏览器自带的粘贴板
+                mdui.snackbar({
+                    message: '已复制！'
+                });
+            } else {
+                mdui.snackbar({
+                    message: '已复制！'
+                });
+            }
+        } else {
+            mdui.snackbar({
+                message: '复制失败！'
+            });
+        }
+    };
 
     function savePicture(url, name) { // 创建下载任务
         var picurl = decodeURIComponent(url);
@@ -137,6 +183,7 @@
             mdui.snackbar({
                 message: '请在手机上保存或Html5Plus不支持！'
             });
+            return;
         }
 
         //图片保存到手机后的路径
@@ -163,6 +210,20 @@
         dtask.start();//开始下载
     }
 </script>
+<script type="text/javascript" charset="utf-8">
+    // H5 plus事件处理
+    function plusReady() {
+        mdui.snackbar({
+            message: 'Html5Plus 已就绪！'
+        });
+        // // 5+ API code
+        // var ws = plus.webview.currentWebview();
+        // ......
+    }
+    //监听 plusready 事件
+    document.addEventListener("plusready", plusReady, false);
+</script>
 <script type="text/javascript" src="https://s9.cnzz.com/z_stat.php?id=1278211133&web_id=1278211133"></script>
+<script>eruda.init();</script>
 </body>
 </html>
