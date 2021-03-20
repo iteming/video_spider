@@ -1,62 +1,69 @@
 <?php
 header('Access-Control-Allow-Origin:*');
 header('Content-type: application/json');
-ini_set('display_errors','off');
+ini_set('display_errors', 'off');
 error_reporting(E_ALL || ~E_NOTICE);
 require 'src/video_spider.php';
-$url = $_REQUEST['url'];
+$share_url = $_REQUEST['url'];
 $id = $_REQUEST['id']; //微视 isee
 $vid = $_REQUEST['vid']; //全民
 $basai_id = $_REQUEST['data']; //巴塞电影
 use Video_spider\Video;
+
 $api = new Video;
-if (strpos($url,'pipix') !== false){
+
+// 正则匹配获取URL地址
+$match_url = '/(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-)+)/';
+preg_match_all($match_url, $share_url, $arr);
+$url = $arr[0][0];
+
+if (strpos($url, 'pipix') !== false) {
     $arr = $api->pipixia($url);
-} elseif (strpos($url, 'douyin') !== false){
+} elseif (strpos($url, 'douyin') !== false) {
     $arr = $api->douyin($url);
-} elseif (strpos($url, 'huoshan') !== false){
+} elseif (strpos($url, 'huoshan') !== false) {
     $arr = $api->huoshan($url);
-} elseif (strpos($url, 'h5.weishi') !== false){
+} elseif (strpos($url, 'h5.weishi') !== false) {
     $arr = $api->weishi($url);
-} elseif (strpos($url, 'isee.weishi') !== false){
+} elseif (strpos($url, 'isee.weishi') !== false) {
     $arr = $api->weishi($id);
-} elseif (strpos($url, 'weibo.com') !== false){
+} elseif (strpos($url, 'weibo.com') !== false) {
     $arr = $api->weibo($url);
-} elseif (strpos($url, 'oasis.weibo') !== false){
+} elseif (strpos($url, 'oasis.weibo') !== false) {
     $arr = $api->lvzhou($url);
-} elseif (strpos($url, 'zuiyou') !== false){
+} elseif (strpos($url, 'zuiyou') !== false) {
     $arr = $api->zuiyou($url);
-} elseif (strpos($url, 'bbq.bilibili') !== false){
+} elseif (strpos($url, 'bbq.bilibili') !== false) {
     $arr = $api->bbq($url);
-} elseif (strpos($url, 'b23.tv') !== false){
+} elseif (strpos($url, 'b23.tv') !== false) {
     $arr = $api->btv($url);
-} elseif (strpos($url, 'kuaishou') !== false){
+} elseif (strpos($url, 'kuaishou') !== false) {
     $arr = $api->kuaishou($url);
-} elseif (strpos($url, 'quanmin') !== false){
+} elseif (strpos($url, 'quanmin') !== false) {
     $arr = $api->quanmin($vid);
-} elseif (strpos($url, 'moviebase') !== false){
+} elseif (strpos($url, 'moviebase') !== false) {
     $arr = $api->basai($basai_id);
-} elseif (strpos($url, 'hanyuhl') !== false){
+} elseif (strpos($url, 'hanyuhl') !== false) {
     $arr = $api->before($url);
-} elseif (strpos($url, 'eyepetizer') !== false){
+} elseif (strpos($url, 'eyepetizer') !== false) {
     $arr = $api->kaiyan($url);
-} elseif (strpos($url, 'immomo') !== false){
+} elseif (strpos($url, 'immomo') !== false) {
     $arr = $api->momo($url);
-} elseif (strpos($url, 'vuevideo') !== false){
+} elseif (strpos($url, 'vuevideo') !== false) {
     $arr = $api->vuevlog($url);
-} elseif (strpos($url, 'xiaokaxiu') !== false){
+} elseif (strpos($url, 'xiaokaxiu') !== false) {
     $arr = $api->xiaokaxiu($url);
-} elseif (strpos($url, 'ippzone') !== false){
+} elseif (strpos($url, 'ippzone') !== false) {
     $arr = $api->pipigaoxiao($url);
-} elseif (strpos($url, 'qq.com') !== false){
+} elseif (strpos($url, 'qq.com') !== false) {
     $arr = $api->quanminkge($url);
 } else {
     $arr = array(
-        'code'  => 201,
+        'code' => 201,
         'msg' => '不支持您输入的链接'
     );
 }
-if (!empty($arr)){
+if (!empty($arr)) {
     echo json_encode($arr, JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 }
 ?>
