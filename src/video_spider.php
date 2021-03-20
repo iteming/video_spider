@@ -32,7 +32,8 @@ class Video
         preg_match('/video\/(.*)\//',$loc,$id);
         $arr = json_decode($this->curl('https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?item_ids='.$id[1]), true);
         preg_match('/href="(.*?)">Found/', $this->curl(str_replace('playwm', 'play', $arr['item_list'][0]["video"]["play_addr"]["url_list"][0])), $matches);
-        $video_url = str_replace('&', '&', $matches[1]);
+        //$video_url = str_replace('&', '&', $matches[1]); // 不明白当时为什么加这一句，但是加了这句很多解析失败的！
+        $video_url = $matches[1];
         $arr = array(
             'code' => 200,
             'msg' => '解析成功',

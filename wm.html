@@ -124,9 +124,11 @@
                 message: '解析成功'
             });
             $(".down").html('<h4 style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #606B7C;">'
-                + jsonObj.data.title + ' [url = ' + jsonObj.data.url
-                + '] </h4><a class="mdui-btn mdui-btn-raised" href="'
+                + jsonObj.data.title + ' [url = ' + jsonObj.data.url + '] </h4>'
+
+                + '<a class="mdui-btn mdui-btn-raised" href="'
                 + jsonObj.data.cover + '" target="_blank" download="video">下载封面</a>'
+
                 + '<a class="mdui-btn mdui-btn-raised" href="' + jsonObj.data.url
                 + '" target="_blank" download="video">查看视频</a>'
 
