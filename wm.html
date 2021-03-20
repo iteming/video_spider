@@ -114,14 +114,14 @@
                 message: '解析成功'
             });
             $(".down").html('<h4 style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #606B7C;">'
-					+ jsonObj.data.title +' [url = '+ jsonObj.data.url
-					+ '] </h4><a class="mdui-btn mdui-btn-raised" href="'
-					+ jsonObj.data.cover + '" target="_blank" download="video">下载封面</a>'
-					+ '<a class="mdui-btn mdui-btn-raised" href="' + jsonObj.data.url
-					+ '" target="_blank" download="video">查看视频</a>'
-					+ '<input class="mdui-btn mdui-btn-raised" id="downClick" '
-					+ 'onclick="savePicture(\''+ encodeURIComponent(jsonObj.data.url)+'\',\''
-					+ jsonObj.data.title+'\')" type="button" value="保存视频到手机" />');
+                + jsonObj.data.title + ' [url = ' + jsonObj.data.url
+                + '] </h4><a class="mdui-btn mdui-btn-raised" href="'
+                + jsonObj.data.cover + '" target="_blank" download="video">下载封面</a>'
+                + '<a class="mdui-btn mdui-btn-raised" href="' + jsonObj.data.url
+                + '" target="_blank" download="video">查看视频</a>'
+                + '<input class="mdui-btn mdui-btn-raised" id="downClick" '
+                + 'onclick="savePicture(\'' + encodeURIComponent(jsonObj.data.url) + '\',\''
+                + jsonObj.data.title + '\')" type="button" value="保存视频到手机" />');
         } else {
             mdui.snackbar({
                 message: '解析失败,视频不存在或者链接不正确'
@@ -130,33 +130,34 @@
     }
 
     function savePicture(url, name) { // 创建下载任务
-		var picurl = decodeURIComponent(url);
-		console.log("URL", picurl);
-    	debugger;
-    	if (!window.plus) {
-			mdui.snackbar({
-				message: '请在手机上保存！或plus插件不支持'
-			});
-		}
+        var picurl = decodeURIComponent(url);
+        console.log("URL", picurl);
+        // 判断runtime是否支持5+ API
+        if (navigator.userAgent.indexOf("Html5Plus") < 0) {//不支持5+ API
+            mdui.snackbar({
+                message: '请在手机上保存或Html5Plus不支持！'
+            });
+        }
+
         //图片保存到手机后的路径
         var picname = "_downloads/" + name;
-        var dtask = window.plus.downloader.createDownload(picurl, {}, function (d, status) {
+        var dtask = plus.downloader.createDownload(picurl, {}, function (d, status) {
             // 下载完成
             if (status === 200) {
                 //  alert( "Download success: " + d.filename );
-				window.plus.gallery.save(picname, function () {//保存到相册方法
-					mdui.snackbar({
-						message: '已保存到手机相册'
-					});
+                plus.gallery.save(picname, function () {//保存到相册方法
+                    mdui.snackbar({
+                        message: '已保存到手机相册'
+                    });
                 }, function () {
-					mdui.snackbar({
-						message: '保存失败，请重试!'
-					});
+                    mdui.snackbar({
+                        message: '保存失败，请重试!'
+                    });
                 });
             } else {
-				mdui.snackbar({
-					message: "Download failed: " + status
-				});
+                mdui.snackbar({
+                    message: "Download failed: " + status
+                });
             }
         });
         dtask.start();//开始下载
