@@ -64,6 +64,13 @@ if (strpos($url, 'pipix') !== false) {
     );
 }
 if (!empty($arr)) {
+    $video_url = $arr['data']['url'];
+    if ($video_url != null) {
+        preg_match('/https:\/\/(.*)\?/', $video_url, $match_arr);
+        if (count($match_arr) == 0) {
+            $arr['data']['url'] = str_replace('http://', 'https://', $video_url);
+        }
+    }
     echo json_encode($arr, JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 }
 ?>

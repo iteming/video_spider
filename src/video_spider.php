@@ -45,6 +45,7 @@ class Video
                 'time' => $arr['item_list'][0]["create_time"],
                 'title' => $arr['item_list'][0]['share_info']['share_title'],
                 'cover' => $arr['item_list'][0]['video']['origin_cover']['url_list'][0],
+//                'url' => $this->get_short_url($video_url),
                 'url' => $video_url,
                 'music' => array(
                     'author' => $arr['item_list'][0]['music']['author'],
@@ -450,5 +451,12 @@ class Video
         preg_match('/href="(.*?)">Found/', $content, $matches);
         $res = $matches[1];
         return $res;
+    }
+
+    private function get_short_url($video_url){
+        $url = "https://api.chik.cn/shortUrlGenerator?sourceUrl=".$video_url."&length=8&hours=24";
+        $response = $this->curl($url);
+        $retrun_url = "https://api.chik.cn/r?u=".json_decode($response, true)['shortChar'];
+        return $retrun_url;
     }
 }
