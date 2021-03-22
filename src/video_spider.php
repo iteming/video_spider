@@ -487,7 +487,6 @@ class Video
         $url = "https://api.chik.cn/v1/oss/uploadUrl?sourceUrl=" . $video_url;
         $response = $this->curl($url);
         $retrun_url = json_decode($response, true)['data'];
-        print_r($retrun_url);
         return $retrun_url;
     }
 }
