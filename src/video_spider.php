@@ -47,8 +47,8 @@ class Video
                 'time' => $arr['item_list'][0]["create_time"],
                 'title' => $arr['item_list'][0]['share_info']['share_title'],
                 'cover' => $arr['item_list'][0]['video']['origin_cover']['url_list'][0],
-                'url' => $this->get_oss_url($video_url),
-//                'url' => $video_url,
+//                'url' => $this->get_oss_url($video_url),
+                'url' => $video_url,
                 'music' => array(
                     'author' => $arr['item_list'][0]['music']['author'],
                     'avatar' => $arr['item_list'][0]['music']['cover_large']['url_list'][0],
@@ -482,7 +482,7 @@ class Video
         return $retrun_url;
     }
 
-    private function get_oss_url($video_url)
+    public function get_oss_url($video_url)
     {
         $url = "https://api.chik.cn/v1/oss/uploadUrl?sourceUrl=" . $video_url;
         $response = $this->curl($url);

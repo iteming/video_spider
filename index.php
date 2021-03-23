@@ -5,6 +5,7 @@ ini_set('display_errors', 'off');
 error_reporting(E_ALL || ~E_NOTICE);
 require 'src/video_spider.php';
 $share_url = $_REQUEST['url'];
+$method = $_REQUEST['method'];
 $id = $_REQUEST['id']; //微视 isee
 $vid = $_REQUEST['vid']; //全民
 $basai_id = $_REQUEST['data']; //巴塞电影
@@ -19,6 +20,14 @@ $url = $arr[0][0];
 
 if (strpos($url, 'pipix') !== false) {
     $arr = $api->pipixia($url);
+}  elseif ($method === "OSS") {
+    $arr = array(
+        'code' => 200,
+        'msg' => '解析成功',
+        'data' => array(
+            'url' => $api->get_oss_url($url)
+        )
+    );
 } elseif (strpos($url, 'douyin') !== false) {
     $arr = $api->douyin($url);
 } elseif (strpos($url, 'huoshan') !== false) {
