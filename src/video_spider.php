@@ -171,22 +171,29 @@ class Video
 
     public function btv($url)
     {
-        $content = $this->curl($url);
-        print_r($content);
-        $source_url = $this->get_href_url($content);
-        preg_match('/id=(.*)\b/', $source_url, $id);
-        $arr = json_decode($this->curl('https://bbq.bilibili.com/bbq/app-bbq/sv/detail?svid=' . $id[1]), true);
+        // 添加bilibili的解析，暂时找不到无水印的解析地址，2021.03.26
+        if(strlen($url) >= 16)
+            $base_url = $url;
+        else
+            $base_url = 'https://m.bilibili.com/video/'.$url;
+
+        $content = $this->curl($base_url);
+        preg_match('/var options = (.*?) {10}var player =/', str_replace(array("\r\n", "\r", "\n"), '', $content), $json_content);
+        preg_match('/bvid:\'(.*?)\',/', str_replace(' ', '', $json_content[1]), $arr_bvid);
+        preg_match('/readyDuration:(.*?),/', str_replace(' ', '', $json_content[1]), $arr_readyDuration);
+        preg_match('/readyPoster:\'(.*?)\',/', str_replace(' ', '', $json_content[1]), $arr_readyPoster);
+        preg_match('/readyVideoUrl:\'(.*?)\',/', str_replace(' ', '', $json_content[1]), $arr_readyVideoUrl);
         $arr = array(
             'code' => 200,
             'msg' => '解析成功',
             'data' => array(
-                'author' => $arr['data']['user_info']['uname'],
-                'avatar' => $arr['data']['user_info']['face'],
-                'time' => $arr['data']['pubtime'],
-                'like' => $arr['data']['like'],
-                'title' => $arr['data']['title'],
-                'cover' => $arr['data']['cover_url'],
-                'url' => $arr['data']['play']['file_info'][0]['url'],
+                'author' => '',
+                'avatar' => '',
+                'time' => $arr_readyDuration[1],
+                'like' => '',
+                'title' => $arr_bvid[1],
+                'cover' => $arr_readyPoster[1],
+                'url' => $arr_readyVideoUrl[1],
             )
         );
         return $arr;
@@ -432,6 +439,7 @@ class Video
             curl_setopt($con, CURLOPT_HTTPHEADER, $header);
         }
         curl_setopt($con, CURLOPT_TIMEOUT, 5000);
+        curl_setopt($con, CURLOPT_FOLLOWLOCATION, true); //返回最后的 Location
         $result = curl_exec($con);
         return $result;
     }
