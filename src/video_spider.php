@@ -172,12 +172,12 @@ class Video
     public function btv($url)
     {
         // 添加bilibili的解析，暂时找不到无水印的解析地址，2021.03.26
-        if(strlen($url) >= 16)
+        if (strlen($url) >= 16)
             $base_url = $url;
         else
-            $base_url = 'https://m.bilibili.com/video/'.$url;
+            $base_url = 'https://m.bilibili.com/video/' . $url;
 
-        $content = $this->curl($base_url);
+        $content = $this->curl($base_url,[], true);
         preg_match('/var options = (.*?) {10}var player =/', str_replace(array("\r\n", "\r", "\n"), '', $content), $json_content);
         preg_match('/bvid:\'(.*?)\',/', str_replace(' ', '', $json_content[1]), $arr_bvid);
         preg_match('/readyDuration:(.*?),/', str_replace(' ', '', $json_content[1]), $arr_readyDuration);
@@ -426,7 +426,7 @@ class Video
         return $arr;
     }
 
-    private function curl($url, $headers = [])
+    private function curl($url, $headers = [], $follow_location = false)
     {
         $header = array('User-Agent:Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1');
         $con = curl_init((string)$url);
@@ -439,7 +439,7 @@ class Video
             curl_setopt($con, CURLOPT_HTTPHEADER, $header);
         }
         curl_setopt($con, CURLOPT_TIMEOUT, 5000);
-        curl_setopt($con, CURLOPT_FOLLOWLOCATION, true); //返回最后的 Location
+        curl_setopt($con, CURLOPT_FOLLOWLOCATION, $follow_location); //返回最后的 Location
         $result = curl_exec($con);
         return $result;
     }
