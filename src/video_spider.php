@@ -30,7 +30,7 @@ class Video
 
     public function douyin($url)
     {
-        $loc = get_headers($url, true)['location'];
+        $loc = get_headers($url, true)['Location'];
         preg_match('/video\/(.*)\//', $loc, $id);
         $arr = json_decode($this->curl('https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?item_ids=' . $id[1]), true);
         preg_match('/href="(.*?)">Found/', $this->curl(str_replace('playwm', 'play', $arr['item_list'][0]["video"]["play_addr"]["url_list"][0])), $matches);
@@ -61,7 +61,7 @@ class Video
 
     public function huoshan($url)
     {
-        $loc = get_headers($url, true)['location'];
+        $loc = get_headers($url, true)['Location'];
         preg_match('/item_id=(.*)&tag/', $loc, $id);
         $arr = json_decode($this->curl('https://share.huoshan.com/api/item/info?item_id=' . $id[1]), true);
         $url = $arr['data']['item_info']['url'];
