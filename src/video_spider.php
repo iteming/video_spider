@@ -11,7 +11,7 @@ class Video
 {
     public function pipixia($url)
     {
-        $loc = get_headers($url, true)['location'];
+        $loc = get_headers($url, true)['Location'];
         preg_match('/item\/(.*)\?/', $loc, $id);
         $arr = json_decode($this->curl('https://is.snssdk.com/bds/cell/detail/?cell_type=1&aid=1319&app_name=super&cell_id=' . $id[1]), true);
         $arr = array(
