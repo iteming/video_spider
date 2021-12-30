@@ -36,15 +36,15 @@ class Video
             $this->curl('https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?item_ids=' . $id[1]),
             true
         );
-//        preg_match(
-//            '/href="(.*?)">Found/',
-//            $this->curl(
-//                str_replace('playwm', 'play', $arr['item_list'][0]["video"]["play_addr"]["url_list"][0])
-//            ),
-//            $matches
-//        );
-//        $video_url = str_replace('&', '&', $matches[1]);
-        $video_url = $arr['item_list'][0]["video"]["play_addr"]["url_list"][0];
+        preg_match(
+            '/href="(.*?)">Found/',
+            $this->curl(
+                str_replace('playwm', 'play', $arr['item_list'][0]["video"]["play_addr"]["url_list"][0])
+            ),
+            $matches
+        );
+        $video_url = str_replace('&', '&', $matches[1]);
+//        $video_url = $arr['item_list'][0]["video"]["play_addr"]["url_list"][0];
         $arr = array(
             'code' => 200,
             'msg' => '解析成功',
