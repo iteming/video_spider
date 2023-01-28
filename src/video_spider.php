@@ -181,10 +181,10 @@ class Video
 
         $content = $this->curl($base_url,[], true);
         preg_match('/var options = (.*?) {10}var player =/', str_replace(array("\r\n", "\r", "\n"), '', $content), $json_content);
-        preg_match('/bvid:\'(.*?)\',/', str_replace(' ', '', $json_content[1]), $arr_bvid);
-        preg_match('/readyDuration:(.*?),/', str_replace(' ', '', $json_content[1]), $arr_readyDuration);
-        preg_match('/readyPoster:\'(.*?)\',/', str_replace(' ', '', $json_content[1]), $arr_readyPoster);
-        preg_match('/readyVideoUrl:\'(.*?)\',/', str_replace(' ', '', $json_content[1]), $arr_readyVideoUrl);
+        preg_match('/\'bvid\':\'(.*?)\',/', str_replace('"', '\'', str_replace(' ', '', $json_content[1])), $arr_bvid);
+        preg_match('/\'readyDuration\':(.*?),/', str_replace('"', '\'', str_replace(' ', '', $json_content[1])), $arr_readyDuration);
+        preg_match('/\'readyPoster\':\'(.*?)\',/', str_replace('"', '\'', str_replace(' ', '', $json_content[1])), $arr_readyPoster);
+        preg_match('/\'readyVideoUrl\':\'(.*?)\',/', str_replace('"', '\'', str_replace(' ', '', $json_content[1])), $arr_readyVideoUrl);
         $arr = array(
             'code' => 200,
             'msg' => '解析成功',
