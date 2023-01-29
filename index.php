@@ -20,15 +20,9 @@ $url = $arr[0][0];
 
 if (strpos($url, 'pipix') !== false) {
     $arr = $api->pipixia($url);
-}  elseif ($method === "OSS") {
-    $arr = array(
-        'code' => 200,
-        'msg' => '解析成功',
-        'data' => array(
-            'url' => $api->get_oss_url($url)
-        )
-    );
-} elseif (strpos($url, 'douyin') !== false) {
+}  elseif (strpos($url, 'www.douyin') !== false) {
+    $arr = $api->douyin_web($url);
+} elseif (strpos($url, 'v.douyin') !== false) {
     $arr = $api->douyin($url);
 } elseif (strpos($url, 'huoshan') !== false) {
     $arr = $api->huoshan($url);
@@ -66,6 +60,14 @@ if (strpos($url, 'pipix') !== false) {
     $arr = $api->pipigaoxiao($url);
 } elseif (strpos($url, 'qq.com') !== false) {
     $arr = $api->quanminkge($url);
+} elseif ($method === "OSS") {
+    $arr = array(
+        'code' => 200,
+        'msg' => '解析成功',
+        'data' => array(
+            'url' => $api->get_oss_url($url)
+        )
+    );
 } else {
     $arr = array(
         'code' => 201,

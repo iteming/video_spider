@@ -61,6 +61,37 @@ class Video
         return $arr;
     }
 
+
+    public function douyin_web($url)
+    {
+        preg_match('/video\/(.*)/', $url, $id);
+        // 接口已于失效
+        $arr = json_decode($this->curl('https://www.iesdouyin.com/aweme/v1/web/aweme/detail/?aweme_id=' . $id[1]), true);
+        if ($arr['status_code']==0) {
+            $arr = ['code' => 200,
+                'msg' => '解析成功',
+                'data' => [
+                    'author' => $arr['aweme_detail']['author']['nickname'],
+                    'uid' => $arr['aweme_detail']['author']['unique_id'],
+                    'avatar' => $arr['aweme_detail']['music']['avatar_large']['url_list'][0],
+                    'like' => $arr['aweme_detail']['statistics']['digg_count'],
+                    'time' => $arr['aweme_detail']["create_time"],
+                    'title' => $arr['aweme_detail']['desc'],
+                    'cover' => $arr['aweme_detail']['video']['origin_cover']['url_list'][0],
+                    'url' => $arr['aweme_detail']['video']['play_addr']['url_list'][0],
+                    'musicurl' => $arr['aweme_detail']['music']['play_url']['url_list'][0],
+                    'music' => [
+                        'author' => $arr['aweme_detail']['music']['author'],
+                        'avatar' => $arr['aweme_detail']['music']['cover_large']['url_list'][0],
+                        'url' => $arr['aweme_detail']['music']['play_url']['url_list'][0],
+                    ]
+                ]
+            ];
+            return $arr;
+        }
+        return $arr;
+    }
+
     public function huoshan($url)
     {
         $loc = get_headers($url, true)['Location'];
