@@ -30,12 +30,24 @@ class Video
 
     public function douyin($url)
     {
-        //$loc = get_headers($url, true)['Location'][1];
         $loc = get_headers($url, true)['Location'];
         preg_match('/video\/(.*)\/\?/', $loc, $id);
-        // 接口已于失效
-        // $arr = json_decode($this->curl('https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?item_ids=' . $id[1]), true);
-        $arr = json_decode($this->curl('https://www.iesdouyin.com/aweme/v1/web/aweme/detail/?aweme_id=' . $id[1]), true);
+
+        // 关于这里的第三方接口问题 请查看 https://github.com/5ime/video_spider#faq
+        $url = 'http://chik.cn:9002/';
+        $data = json_encode(array('url' => 'https://www.douyin.com/aweme/v1/web/aweme/detail/?aweme_id=' . $id[1] . '&aid=1128&version_name=23.5.0&device_platform=android&os_version=2333','userAgent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'));
+        $header = array('Content-Type: application/json');
+        $url = json_decode($this->curl($url, $header, $data), true)['data']['url'];
+
+        $msToken = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 107);
+        $header = array('User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36', 'Referer: https://www.douyin.com/', 'Cookie: msToken='.$msToken.';odin_tt=324fb4ea4a89c0c05827e18a1ed9cf9bf8a17f7705fcc793fec935b637867e2a5a9b8168c885554d029919117a18ba69; ttwid=1%7CWBuxH_bhbuTENNtACXoesI5QHV2Dt9-vkMGVHSRRbgY%7C1677118712%7C1d87ba1ea2cdf05d80204aea2e1036451dae638e7765b8a4d59d87fa05dd39ff; bd_ticket_guard_client_data=eyJiZC10aWNrZXQtZ3VhcmQtdmVyc2lvbiI6MiwiYmQtdGlja2V0LWd1YXJkLWNsaWVudC1jc3IiOiItLS0tLUJFR0lOIENFUlRJRklDQVRFIFJFUVVFU1QtLS0tLVxyXG5NSUlCRFRDQnRRSUJBREFuTVFzd0NRWURWUVFHRXdKRFRqRVlNQllHQTFVRUF3d1BZbVJmZEdsamEyVjBYMmQxXHJcbllYSmtNRmt3RXdZSEtvWkl6ajBDQVFZSUtvWkl6ajBEQVFjRFFnQUVKUDZzbjNLRlFBNUROSEcyK2F4bXAwNG5cclxud1hBSTZDU1IyZW1sVUE5QTZ4aGQzbVlPUlI4NVRLZ2tXd1FJSmp3Nyszdnc0Z2NNRG5iOTRoS3MvSjFJc3FBc1xyXG5NQ29HQ1NxR1NJYjNEUUVKRGpFZE1Cc3dHUVlEVlIwUkJCSXdFSUlPZDNkM0xtUnZkWGxwYmk1amIyMHdDZ1lJXHJcbktvWkl6ajBFQXdJRFJ3QXdSQUlnVmJkWTI0c0RYS0c0S2h3WlBmOHpxVDRBU0ROamNUb2FFRi9MQnd2QS8xSUNcclxuSURiVmZCUk1PQVB5cWJkcytld1QwSDZqdDg1czZZTVNVZEo5Z2dmOWlmeTBcclxuLS0tLS1FTkQgQ0VSVElGSUNBVEUgUkVRVUVTVC0tLS0tXHJcbiJ9');
+        $arr = json_decode($this->curl($url, $header), true);
+        $video_url = $arr['aweme_detail']['video']['play_addr']['url_list'][0];
+
+        if (empty($video_url)) {
+            $arr = array('code' => 201, 'msg' => '解析失败');
+            return $arr;
+        }
         if ($arr['status_code']==0) {
             $arr = ['code' => 200,
                 'msg' => '解析成功',
@@ -65,8 +77,20 @@ class Video
     public function douyin_web($url)
     {
         preg_match('/video\/(.*)/', $url, $id);
-        // 接口已于失效
-        $arr = json_decode($this->curl('https://www.iesdouyin.com/aweme/v1/web/aweme/detail/?aweme_id=' . $id[1]), true);
+        $url = 'http://chik.cn:9002/';
+        $data = json_encode(array('url' => 'https://www.douyin.com/aweme/v1/web/aweme/detail/?aweme_id=' . $id[1] . '&aid=1128&version_name=23.5.0&device_platform=android&os_version=2333','userAgent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'));
+        $header = array('Content-Type: application/json');
+        $url = json_decode($this->curl($url, $header, $data), true)['data']['url'];
+
+        $msToken = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 107);
+        $header = array('User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36', 'Referer: https://www.douyin.com/', 'Cookie: msToken='.$msToken.';odin_tt=324fb4ea4a89c0c05827e18a1ed9cf9bf8a17f7705fcc793fec935b637867e2a5a9b8168c885554d029919117a18ba69; ttwid=1%7CWBuxH_bhbuTENNtACXoesI5QHV2Dt9-vkMGVHSRRbgY%7C1677118712%7C1d87ba1ea2cdf05d80204aea2e1036451dae638e7765b8a4d59d87fa05dd39ff; bd_ticket_guard_client_data=eyJiZC10aWNrZXQtZ3VhcmQtdmVyc2lvbiI6MiwiYmQtdGlja2V0LWd1YXJkLWNsaWVudC1jc3IiOiItLS0tLUJFR0lOIENFUlRJRklDQVRFIFJFUVVFU1QtLS0tLVxyXG5NSUlCRFRDQnRRSUJBREFuTVFzd0NRWURWUVFHRXdKRFRqRVlNQllHQTFVRUF3d1BZbVJmZEdsamEyVjBYMmQxXHJcbllYSmtNRmt3RXdZSEtvWkl6ajBDQVFZSUtvWkl6ajBEQVFjRFFnQUVKUDZzbjNLRlFBNUROSEcyK2F4bXAwNG5cclxud1hBSTZDU1IyZW1sVUE5QTZ4aGQzbVlPUlI4NVRLZ2tXd1FJSmp3Nyszdnc0Z2NNRG5iOTRoS3MvSjFJc3FBc1xyXG5NQ29HQ1NxR1NJYjNEUUVKRGpFZE1Cc3dHUVlEVlIwUkJCSXdFSUlPZDNkM0xtUnZkWGxwYmk1amIyMHdDZ1lJXHJcbktvWkl6ajBFQXdJRFJ3QXdSQUlnVmJkWTI0c0RYS0c0S2h3WlBmOHpxVDRBU0ROamNUb2FFRi9MQnd2QS8xSUNcclxuSURiVmZCUk1PQVB5cWJkcytld1QwSDZqdDg1czZZTVNVZEo5Z2dmOWlmeTBcclxuLS0tLS1FTkQgQ0VSVElGSUNBVEUgUkVRVUVTVC0tLS0tXHJcbiJ9');
+        $arr = json_decode($this->curl($url, $header), true);
+        $video_url = $arr['aweme_detail']['video']['play_addr']['url_list'][0];
+
+        if (empty($video_url)) {
+            $arr = array('code' => 201, 'msg' => '解析失败');
+            return $arr;
+        }
         if ($arr['status_code']==0) {
             $arr = ['code' => 200,
                 'msg' => '解析成功',
@@ -459,20 +483,21 @@ class Video
         return $arr;
     }
 
-    private function curl($url, $headers = [], $follow_location = false)
-    {
-        $header = array('User-Agent:Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1');
+    private function curl($url, $header = array(), $data = array()) {
         $con = curl_init((string)$url);
-        curl_setopt($con, CURLOPT_HEADER, False);
-        curl_setopt($con, CURLOPT_SSL_VERIFYPEER, False);
+        curl_setopt($con, CURLOPT_HEADER, false);
+        curl_setopt($con, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($con, CURLOPT_RETURNTRANSFER, true);
-        if (!empty($headers)) {
-            curl_setopt($con, CURLOPT_HTTPHEADER, $headers);
-        } else {
+        curl_setopt($con, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($con, CURLOPT_AUTOREFERER, 1);
+        if (isset($header)) {
             curl_setopt($con, CURLOPT_HTTPHEADER, $header);
         }
+        if (isset($data)) {
+            curl_setopt($con, CURLOPT_POST, true);
+            curl_setopt($con, CURLOPT_POSTFIELDS, $data);
+        }
         curl_setopt($con, CURLOPT_TIMEOUT, 5000);
-        curl_setopt($con, CURLOPT_FOLLOWLOCATION, $follow_location); //返回最后的 Location
         $result = curl_exec($con);
         return $result;
     }
